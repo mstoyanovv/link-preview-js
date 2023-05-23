@@ -63,6 +63,23 @@ function getDescription(doc: cheerio.Root) {
   return description;
 }
 
+function getAuthor(doc: cheerio.Root) {
+  const authorName =
+    metaTagContent(doc, `author`, `name`) ||
+    metaTagContent(doc, `Author`, `name`) ||
+    metaTagContent(doc, `og:author`, `property`);
+  return authorName;
+}
+
+function getAuthorImage(doc: cheerio.Root) {
+  const authorName =
+    metaTagContent(doc, `author`, `name`) ||
+    metaTagContent(doc, `Author`, `name`) ||
+    metaTagContent(doc, `og:author`, `property`);
+  const imageLink =  doc(`img[alt='${authorName}']`).attr(`src`);
+  return imageLink;
+}
+
 function getMediaType(doc: cheerio.Root) {
   const node = metaTag(doc, `medium`, `name`);
   if (node) {
@@ -282,6 +299,8 @@ function parseTextResponse(
     title: getTitle(doc),
     siteName: getSiteName(doc),
     description: getDescription(doc),
+    author: getAuthor(doc),
+    authorImage: getAuthorImage(doc),
     mediaType: getMediaType(doc) || `website`,
     contentType,
     images: getImages(doc, url, options.imagesPropertyType),
